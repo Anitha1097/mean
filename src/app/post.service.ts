@@ -82,11 +82,11 @@ export class PostService {
   //   return this.httpClient.post(this.url, newReg);
   // }
 
-  postData(title: string, content: string, imagePath: File|string) {
+  postData(title: string, content: string, image: File) {
     const postData = new FormData();
     postData.append("title", title);
     postData.append("content", content);
-    postData.append("imagePath", imagePath);
+    postData.append("image", image);
     this.httpClient
       .post<{ message: string; post: Post }>(
         BACKEND_URL ,postData ).subscribe(responseData => {
