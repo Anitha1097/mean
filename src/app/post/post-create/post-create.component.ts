@@ -9,7 +9,7 @@ import { Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { Post } from "../../post/post.model";
 import { mimeType } from "../../mime-type.validator";
-import { AuthService } from "../../auth/auth.service";
+import { AuthServices } from "../../auth/auth.service";
 @Component({
   selector: 'app-post-create',
   templateUrl: './post-create.component.html',
@@ -17,7 +17,7 @@ import { AuthService } from "../../auth/auth.service";
 
 })
 export class PostCreateComponent implements OnInit, OnDestroy{
-  constructor(private postService: PostService, private httpClient: HttpClient, private authService: AuthService) { }
+  constructor(private postService: PostService, private httpClient: HttpClient, private authService: AuthServices) { }
   newPost = 'mean-course';
   post2 = "";
   postInput1 = ""; postInput2 = ""; public posts: any[]; 

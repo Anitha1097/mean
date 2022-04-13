@@ -12,12 +12,13 @@ if (environment.production) {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthServices {
   private isAuthenticated = false;
   private token: string;
   private tokenTimer: any;
-  private userId: string;
+  private userId: string; url: any;
   private authStatusListener = new Subject<boolean>();
+  private socialAuthStatusListener = new Subject<boolean>();
   constructor(private http: HttpClient, private router: Router) { }
   getToken() {
     return this.token;
@@ -28,24 +29,28 @@ export class AuthService {
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();
   }
+
+  getSocialAuthStatusListener() {
+    return this.socialAuthStatusListener.asObservable();
+  }
   getIsAuth() {
     return this.isAuthenticated;
   }
 
   createUser(email: string, password: string) {
-    const authData: AuthData = { email: email, password: password };
+    const authData: AuthData = { email: email, password: password, type: 'sample' };
     this.http.post(BACKEND_URL + "signup", authData)
       .subscribe(response => {
         console.log(response);
         this.router.navigate(["/"]);
       }, error => {
-          this.authStatusListener.next(false);
+        this.authStatusListener.next(false);
       });
   }
 
-  login(email: string, password: string) {
-    const authData: AuthData = { email: email, password: password };
-    this.http.post<{ token: string, expiresIn: number, userId: string }>(BACKEND_URL + "login", authData)
+  login(email: string, password: string, type: string) {
+    const authData: AuthData = { email: email, password: password, type: type };
+    this.http.post<{ token: string, expiresIn: number, userId: string, type: string }>(BACKEND_URL + "login", authData)
       .subscribe(response => {
         console.log(response);
         const token = response.token;
@@ -55,14 +60,23 @@ export class AuthService {
           this.setAuthTimer(expiresInDuration);
           this.isAuthenticated = true;
           this.userId = response.userId;
-          this.authStatusListener.next(true);
+          if (response.type == 'socialLogin') {
+            this.socialAuthStatusListener.next(true);
+            this.authStatusListener.next(false);
+          } else {
+            this.authStatusListener.next(true);
+            this.socialAuthStatusListener.next(false);
+          }
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
           console.log(expirationDate);
-          this.saveAuthData(token, expirationDate, this.userId);          this.router.navigate(['/']);
+          this.saveAuthData(token, expirationDate, this.userId);
+          this.router.navigate(['/']);
         }
       }, error => {
         this.authStatusListener.next(false);
+        this.socialAuthStatusListener.next(false);
+
       })
   }
 
@@ -116,9 +130,11 @@ export class AuthService {
     this.token = null;
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
+    this.socialAuthStatusListener.next(false);
     this.userId = null;
     clearTimeout(this.tokenTimer);
     this.clearAuthData();
     this.router.navigate(['/']);
   }
+ 
 }

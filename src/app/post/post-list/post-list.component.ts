@@ -5,7 +5,7 @@ import { PostService } from '../../post.service';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from "rxjs";
 import { PageEvent } from "@angular/material/paginator";
-import { AuthService } from "../../auth/auth.service";
+import { AuthServices } from "../../auth/auth.service";
 import { environment } from "../../../environments/environment";
 const BACKEND_URL = environment.apiUrl + "/posts/";
 @Component({
@@ -18,8 +18,9 @@ export class PostListComponent implements OnInit {
   postsPerPage = 2;
   pageSizeOptions = [1, 2, 5, 10];
   userIsAuthenticated = false;
+  socialUserIsAuthenticated = false;
   currentPage = 1;  userId: string;
-  constructor(private postService: PostService, private httpClient: HttpClient, private authService: AuthService) { }
+  constructor(private postService: PostService, private httpClient: HttpClient, private authService: AuthServices) { }
   post: Post[] = [];
   private postsSub: Subscription;
   private authStatusSub: Subscription;
@@ -41,6 +42,12 @@ export class PostListComponent implements OnInit {
         .getAuthStatusListener()
         .subscribe(isAuthenticated => {
           this.userIsAuthenticated = isAuthenticated;
+          this.userId = this.authService.getUserId();
+        });
+        this.authStatusSub = this.authService
+        .getSocialAuthStatusListener()
+        .subscribe(isAuthenticated => {
+          this.socialUserIsAuthenticated = isAuthenticated;
           this.userId = this.authService.getUserId();
         });
   }
