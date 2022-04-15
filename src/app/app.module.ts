@@ -16,13 +16,14 @@ import { GoogleLoginProvider, FacebookLoginProvider } from "angularx-social-logi
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from '../environments/environment';
+import { AdminlteModule } from "./adminlte/adminlte.module";
 
 @NgModule({
   declarations: [
-    AppComponent, HeaderComponent, ErrorComponent
+    AppComponent, HeaderComponent, ErrorComponent, 
   ],
   imports: [
-    BrowserModule, BrowserAnimationsModule, HttpClientModule, AppRoutingModule, AngularMaterialModule, SocialLoginModule,
+    BrowserModule, BrowserAnimationsModule, HttpClientModule, AppRoutingModule, AngularMaterialModule, SocialLoginModule,AdminlteModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule
   ],

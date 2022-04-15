@@ -30,10 +30,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(isAuthenticated => {
         this.socialUserIsAuthenticated = isAuthenticated;
       });
+      this.authService.logout();
   }
 
   onLogout() {
-    this.authService.logout();
+    // this.authService.logout();
   }
 
   googleLogout(){

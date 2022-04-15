@@ -71,7 +71,7 @@ export class AuthServices {
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
           console.log(expirationDate);
           this.saveAuthData(token, expirationDate, this.userId);
-          this.router.navigate(['/']);
+          this.router.navigate(['adminlte/dashboard']);
         }
       }, error => {
         this.authStatusListener.next(false);
@@ -134,7 +134,7 @@ export class AuthServices {
     this.userId = null;
     clearTimeout(this.tokenTimer);
     this.clearAuthData();
-    this.router.navigate(['/']);
+    this.router.navigate(['']);
   }
  
 }
